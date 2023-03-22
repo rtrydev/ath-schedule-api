@@ -52,7 +52,6 @@ export class ScheduleScrapperService {
 
         dom.window.document.querySelector('ul')?.querySelectorAll('li')
             .forEach(li => {
-                console.log(li.outerHTML);
                 const img = li.querySelector('img');
 
                 if (!img) {

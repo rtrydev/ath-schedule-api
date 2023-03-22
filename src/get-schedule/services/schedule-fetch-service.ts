@@ -8,6 +8,6 @@ export class ScheduleFetchService {
         const url = `https://plany.ath.bielsko.pl/plan.php?type=${type}&id=${id}&cvsfile=true`;
 
         const response = await axios.get(url);
-        fs.writeFileSync(`/tmp/${id}.ics`, response.data);
+        return response.data;
     }
 }

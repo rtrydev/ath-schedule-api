@@ -25,6 +25,11 @@ data "aws_iam_policy_document" "lambda_document" {
       "logs:PutLogEvents",
       "cloudwatch:PutMetricData",
       "kms:*",
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "dynamodb:GetItem",
+      "dynamodb:PutItem"
     ]
 
     resources = ["*"]

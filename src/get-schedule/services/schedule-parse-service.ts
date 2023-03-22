@@ -4,11 +4,11 @@ import {ScheduleDetails} from "../models/schedule-details";
 
 @Service()
 export class ScheduleParseService {
-    public parseIcsToJson(icsFilePath: string): ScheduleDetails[] {
+    public parseIcsToJson(icsSchedule: string): ScheduleDetails[] {
         const rawEvents: any[] = [];
         let currentRawObj: any = {};
 
-        const lines = fs.readFileSync(icsFilePath, 'utf-8').split('\n')
+        const lines = icsSchedule.split('\n')
 
         lines.forEach(line => {
             if (line === 'BEGIN:VEVENT') {
