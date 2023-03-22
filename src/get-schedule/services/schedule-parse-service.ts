@@ -73,7 +73,7 @@ export class ScheduleParseService {
     }
 
     private getRooms(summary: string) {
-        const roomRegex = /([A-Z][0-9]{1,3}[A-Za-z]?)|(Hala sportowa [0-9]\/[0-9])/g;
+        const roomRegex = /([A-Z][0-9]{1,3}[A-Za-z]?)|(Hala sportowa [0-9]\/[0-9])|(nauczanie zdalne)/g;
 
         const regexMatch = summary.matchAll(roomRegex);
 
