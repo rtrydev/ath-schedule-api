@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import {Service} from "typedi";
 import {ScheduleDetails} from "../models/schedule-details";
 
@@ -29,16 +28,31 @@ export class ScheduleParseService {
         return rawEvents.map(
             event => {
                 const summary = event.SUMMARY.toString();
-                const summaryItems = summary.split(' ') as string[];
+
+                const speakers = this.getSpeakers(summary);
+                const rooms = this.getRooms(summary);
+
+                let strippedSummary: string = summary;
+
+                speakers.forEach(speaker => {
+                    strippedSummary = strippedSummary.replace(speaker, '');
+                });
+
+                rooms.forEach(room => {
+                    strippedSummary = strippedSummary.replace(room, '');
+                });
+
+                strippedSummary = strippedSummary.replace(/ +/g, ' ').trim();
+                const summaryItems = strippedSummary.split(' ') as string[];
 
                 return {
                     id: event.UID.toString(),
                     startTime: Date.parse(this.formatDate(event.DTSTART.toString())) / 1000,
                     endTime: Date.parse(this.formatDate(event.DTEND.toString())) / 1000,
-                    course: summaryItems[0],
-                    type: summaryItems[1],
-                    speakers: summaryItems.slice(2, summaryItems.length - 1),
-                    room: summaryItems.slice(-1)[0]
+                    course: summaryItems.slice(0, -1).join(' '),
+                    type: summaryItems[summaryItems.length - 1],
+                    speakers: this.getSpeakers(summary),
+                    rooms: this.getRooms(summary)
                 };
             }
         );
@@ -56,5 +70,21 @@ export class ScheduleParseService {
         const second = time.slice(4, 6);
 
         return `${year}-${month}-${day}T${hour}:${minute}:${second}.000Z`;
+    }
+
+    private getRooms(summary: string) {
+        const roomRegex = /([A-Z][0-9]{1,3}[A-Za-z]?)|(Hala sportowa [0-9]\/[0-9])/g;
+
+        const regexMatch = summary.matchAll(roomRegex);
+
+        return Array.from(regexMatch, match => match[0]);
+    }
+
+    private getSpeakers(summary: string) {
+        const speakerRegex = /[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]?[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,2}/g;
+
+        const regexMatch = summary.matchAll(speakerRegex);
+
+        return Array.from(regexMatch, match => match[0]);
     }
 }

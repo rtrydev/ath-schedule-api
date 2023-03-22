@@ -5,5 +5,5 @@ export class ScheduleDetails {
     course: string;
     type: string;
     speakers: string[];
-    room: string;
+    rooms: string[];
 }
