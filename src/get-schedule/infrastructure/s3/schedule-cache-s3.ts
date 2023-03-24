@@ -38,25 +38,11 @@ export class ScheduleCacheS3 {
     }
 
     async createCachedSchedule(id: string, schedule: string) {
-        let result = false;
-
         await this.s3.putObject({
             Bucket: this.getS3Bucket(),
             Key: this.getCacheKey(id),
             Body: schedule
-        }, (err, data) => {
-            if (err) {
-                console.log(`Failed to create cache for ${id}`, err.message);
-                return;
-            }
-
-            if (data) {
-                console.log(`Created cache for ${id}`);
-                result = true;
-            }
         }).promise();
-
-        return Promise.resolve(result);
     }
 
     private getS3Bucket() {

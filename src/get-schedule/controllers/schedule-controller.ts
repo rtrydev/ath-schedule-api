@@ -27,7 +27,9 @@ export class ScheduleController {
 
             schedule = this.scheduleParseService.parseIcsToJson(fetchedSchedule);
 
-            await this.scheduleCacheS3.createCachedSchedule(params.id, fetchedSchedule);
+            if (schedule.length > 0) {
+                await this.scheduleCacheS3.createCachedSchedule(params.id, fetchedSchedule);
+            }
         }
 
         if (params.fromDate) {
