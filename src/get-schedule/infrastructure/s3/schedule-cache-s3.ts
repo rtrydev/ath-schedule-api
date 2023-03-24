@@ -13,25 +13,23 @@ export class ScheduleCacheS3 {
         let cachedSchedule = null;
 
         try {
-            await this.s3.getObject({
+            const fetchedSchedule = await this.s3.getObject({
                 Bucket: this.getS3Bucket(),
                 Key: this.getCacheKey(id)
-            }, (err, data) => {
-                if (err) {
-                    return;
-                }
-
-                if (data) {
-                    const maxCacheTime = 1000 * 60 * 60 * 24;
-
-                    const timeNow = new Date().getTime();
-                    const lastModifiedTime = data?.LastModified?.getTime() || timeNow;
-
-                    const isExpired = (timeNow - lastModifiedTime) > maxCacheTime;
-
-                    cachedSchedule = isExpired ? null : data.Body?.toString();
-                }
             }).promise();
+
+            if (!fetchedSchedule.Body) {
+                return;
+            }
+
+            const maxCacheTime = 1000 * 60 * 60 * 24;
+
+            const timeNow = new Date().getTime();
+            const lastModifiedTime = fetchedSchedule?.LastModified?.getTime() || timeNow;
+
+            const isExpired = (timeNow - lastModifiedTime) > maxCacheTime;
+
+            return isExpired ? null : fetchedSchedule.Body?.toString();
         } catch (e) {
             console.log(`Could not find cached version for ${id}, fetching data from server`);
         }
