@@ -1,6 +1,15 @@
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "ATHScheduleApi"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_credentials = false
+    allow_headers     = []
+    allow_methods     = ["GET", "OPTIONS"]
+    allow_origins     = ["*"]
+    expose_headers    = []
+    max_age           = 0
+  }
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
